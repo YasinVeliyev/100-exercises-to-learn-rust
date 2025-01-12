@@ -34,6 +34,7 @@ trait Power<F: Copy + Mul + PartialEq + Eq> {
 impl_power_trait!(u32, u16);
 impl_power_trait!(u32, u32);
 impl_power_trait!(u32, &u32);
+impl_power_trait!(i32, &u32);
 
 #[cfg(test)]
 mod tests {
