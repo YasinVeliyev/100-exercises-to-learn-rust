@@ -13,27 +13,27 @@
 // You don't have to though: it's perfectly okay to write three separate
 // implementations manually. Venture further only if you're curious.
 
-trait Power<F> {
-    fn power(&self, n: F) -> Self;
+use std::ops::Mul;
+
+macro_rules! impl_power_trait {
+    ($target:ty,$exp:ty) => {
+        impl Power<$exp> for $target {
+            type Output = $target;
+            fn power(&self, n: $exp) -> Self::Output {
+                self.pow(n.clone() as u32)
+            }
+        }
+    };
 }
 
-impl Power<u16> for u32 {
-    fn power(&self, n: u16) -> Self {
-        self.pow(n as u32)
-    }
+trait Power<F: Copy + Mul + PartialEq + Eq> {
+    type Output;
+    fn power(&self, n: F) -> Self::Output;
 }
 
-impl Power<&u32> for u32 {
-    fn power(&self, n: &u32) -> Self {
-        self.pow(*n)
-    }
-}
-
-impl Power<u32> for u32 {
-    fn power(&self, n: u32) -> Self {
-        self.pow(n)
-    }
-}
+impl_power_trait!(u32, u16);
+impl_power_trait!(u32, u32);
+impl_power_trait!(u32, &u32);
 
 #[cfg(test)]
 mod tests {
