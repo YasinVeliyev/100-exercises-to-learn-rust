@@ -1,9 +1,13 @@
 // TODO: Flesh out the `WeekTemperatures` struct and its method implementations to pass the tests.
 
+use std::collections::HashMap;
+use std::hash::Hash;
+
 pub struct WeekTemperatures {
-    // TODO
+    temperatures: [Option<i32>; 7],
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Weekday {
     Monday,
     Tuesday,
@@ -14,17 +18,58 @@ pub enum Weekday {
     Sunday,
 }
 
+// impl Hash for Weekday {
+//     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+//         let id = match self {
+//             Weekday::Monday => 0,
+//             Weekday::Tuesday => 1,
+//             Weekday::Wednesday => 2,
+//             Weekday::Thursday => 3,
+//             Weekday::Friday => 4,
+//             Weekday::Saturday => 5,
+//             Weekday::Sunday => 6,
+//         };
+//         id.hash(state)
+//     }
+// }
+
 impl WeekTemperatures {
     pub fn new() -> Self {
-        todo!()
+        Self {
+            temperatures: [None; 7],
+        }
+    }
+
+    fn get_index_of_day(day: Weekday) -> usize {
+        // let days = HashMap::from([
+        //     (Weekday::Monday, 0_usize),
+        //     (Weekday::Tuesday, 1),
+        //     (Weekday::Wednesday, 2),
+        //     (Weekday::Thursday, 3),
+        //     (Weekday::Friday, 4),
+        //     (Weekday::Saturday, 5),
+        //     (Weekday::Sunday, 6),
+        // ]);
+        // *days.get(&day).unwrap()
+        match day {
+            Weekday::Monday => 0,
+            Weekday::Tuesday => 1,
+            Weekday::Wednesday => 2,
+            Weekday::Thursday => 3,
+            Weekday::Friday => 4,
+            Weekday::Saturday => 5,
+            Weekday::Sunday => 6,
+        }
     }
 
     pub fn get_temperature(&self, day: Weekday) -> Option<i32> {
-        todo!()
+        let index = WeekTemperatures::get_index_of_day(day);
+        self.temperatures[index]
     }
 
     pub fn set_temperature(&mut self, day: Weekday, temperature: i32) {
-        todo!()
+        let index = WeekTemperatures::get_index_of_day(day);
+        self.temperatures[index] = Some(temperature);
     }
 }
 
