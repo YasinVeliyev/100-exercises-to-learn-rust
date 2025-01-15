@@ -1,6 +1,6 @@
 // TODO: Implement `IndexMut<&TicketId>` and `IndexMut<TicketId>` for `TicketStore`.
 
-use std::ops::Index;
+use std::ops::{Index, IndexMut};
 use ticket_fields::{TicketDescription, TicketTitle};
 
 #[derive(Clone)]
@@ -31,6 +31,18 @@ pub enum Status {
     ToDo,
     InProgress,
     Done,
+}
+
+impl IndexMut<&TicketId> for TicketStore {
+    fn index_mut(&mut self, index: &TicketId) -> &mut Self::Output {
+        self.tickets.get_mut(index.0 as usize).unwrap()
+    }
+}
+
+impl IndexMut<TicketId> for TicketStore {
+    fn index_mut(&mut self, index: TicketId) -> &mut Self::Output {
+        self.tickets.get_mut(index.0 as usize).unwrap()
+    }
 }
 
 impl TicketStore {

@@ -12,9 +12,9 @@ pub struct TicketStore {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Ticket {
-    title: TicketTitle,
-    description: TicketDescription,
-    status: Status,
+    pub title: TicketTitle,
+    pub description: TicketDescription,
+    pub status: Status,
 }
 
 #[derive(Clone, Debug, Copy, PartialEq)]
@@ -33,6 +33,10 @@ impl TicketStore {
 
     pub fn add_ticket(&mut self, ticket: Ticket) {
         self.tickets.push(ticket);
+    }
+
+    pub fn iter(&self) -> std::slice::Iter<Ticket> {
+        self.tickets.iter()
     }
 }
 
