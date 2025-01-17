@@ -1,4 +1,7 @@
-use tokio::net::TcpListener;
+use tokio::{
+    io::{AsyncReadExt, AsyncWriteExt},
+    net::{TcpListener, TcpStream},
+};
 
 // TODO: write an echo server that accepts incoming TCP connections and
 //  echoes the received data back to the client.
@@ -11,7 +14,16 @@ use tokio::net::TcpListener;
 // - `tokio::net::TcpStream::split` to obtain a reader and a writer from the socket
 // - `tokio::io::copy` to copy data from the reader to the writer
 pub async fn echo(listener: TcpListener) -> Result<(), anyhow::Error> {
-    todo!()
+    loop {
+        match listener.accept().await {
+            Ok((mut stream, _)) => {
+                let mut buf = String::new();
+                stream.read_to_string(&mut buf).await.unwrap();
+                let _ = stream.write(buf.as_bytes()).await;
+            }
+            Err(err) => return Err(err.into()),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -39,6 +51,7 @@ mod tests {
             // Read the response
             let mut buf = Vec::with_capacity(request.len());
             reader.read_to_end(&mut buf).await.unwrap();
+            println!("{}", String::from_utf8((&buf).clone()).unwrap());
             assert_eq!(&buf, request.as_bytes());
         }
     }
