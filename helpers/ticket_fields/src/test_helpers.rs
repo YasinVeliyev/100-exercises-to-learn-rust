@@ -1,6 +1,7 @@
 use crate::{TicketDescription, TicketTitle};
 use common::{valid_description, valid_title};
 
+
 /// A function to generate a valid ticket title,
 /// for test purposes.
 pub fn ticket_title() -> TicketTitle {
