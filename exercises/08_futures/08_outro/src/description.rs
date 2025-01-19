@@ -2,6 +2,12 @@ use serde::*;
 #[derive(Debug, PartialEq, Clone, Eq, Deserialize, Serialize)]
 pub struct TicketDescription(String);
 
+impl TicketDescription {
+    pub fn get(&self) -> &String {
+        &self.0
+    }
+}
+
 #[derive(Debug, thiserror::Error, Deserialize, Serialize)]
 pub enum TicketDescriptionError {
     #[error("The description cannot be empty")]

@@ -4,7 +4,13 @@ use std::convert::TryFrom;
 #[derive(Debug, PartialEq, Clone, Eq, Deserialize, Serialize)]
 pub struct TicketTitle(String);
 
-#[derive(Debug, thiserror::Error,Deserialize,Serialize)]
+impl TicketTitle {
+    pub fn get(&self) -> &String {
+        &self.0
+    }
+}
+
+#[derive(Debug, thiserror::Error, Deserialize, Serialize)]
 pub enum TicketTitleError {
     #[error("The title cannot be empty")]
     Empty,

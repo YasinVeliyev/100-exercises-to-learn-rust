@@ -1,16 +1,19 @@
-use crate::{description::*, title::*};
+use crate::{
+    description::{self, *},
+    title::*,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::fmt::Display;
 use std::ops::{Index, IndexMut};
-
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct TicketStore {
     tickets: HashMap<TicketId, Ticket>,
     counter: u64,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Deserialize, Serialize)]
-pub struct TicketId(u64);
+pub struct TicketId(pub u64);
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Ticket {
@@ -33,15 +36,28 @@ impl Ticket {
     pub fn id(&self) -> TicketId {
         self.id
     }
-    pub fn title(&self) -> &TicketTitle {
-        &self.title
+    pub fn title(&self) -> &String {
+        self.title.get()
     }
 
-    pub fn description(&self) -> &TicketDescription {
-        &self.description
+    pub fn description(&self) -> &String {
+        self.description.get()
     }
     pub fn status(&self) -> Status {
         self.status
+    }
+}
+
+impl Display for Ticket {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{},{},{},{:?}",
+            self.id.0,
+            self.title(),
+            self.description(),
+            self.status
+        )
     }
 }
 
@@ -56,6 +72,21 @@ pub enum Status {
     ToDo,
     InProgress,
     Done,
+}
+
+impl TryFrom<String> for Status {
+    type Error = String;
+    fn try_from(value: String) -> Result<Self, String> {
+        let value = value.to_lowercase();
+        if value == "todo" {
+            return Ok(Self::ToDo);
+        } else if value == "inprogress" {
+            return Ok(Self::InProgress);
+        } else if value == "done" {
+            return Ok(Self::Done);
+        }
+        Err("Only `todo`,`inprogress`,  `done`".to_owned())
+    }
 }
 
 impl TicketStore {
