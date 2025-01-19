@@ -1,7 +1,4 @@
-use crate::{
-    description::{self, *},
-    title::*,
-};
+use crate::{description::*, title::*};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt::Display;
