@@ -1,13 +1,7 @@
+use crate::status::*;
 use crate::{description::*, title::*};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use std::fmt::Display;
-use std::ops::{Index, IndexMut};
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct TicketStore {
-    tickets: HashMap<TicketId, Ticket>,
-    counter: u64,
-}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub struct TicketId(pub u64);
@@ -43,6 +37,17 @@ impl Ticket {
     pub fn status(&self) -> Status {
         self.status
     }
+
+    pub fn set_title(&mut self, title: TicketTitle) {
+        self.title = title;
+    }
+
+    pub fn set_description(&mut self, description: TicketDescription) {
+        self.description = description
+    }
+    pub fn set_status(&mut self, status: Status) {
+        self.status = status
+    }
 }
 
 impl Display for Ticket {
@@ -64,77 +69,9 @@ pub struct TicketDraft {
     pub description: TicketDescription,
 }
 
-#[derive(Clone, Debug, Copy, PartialEq, Eq, Deserialize, Serialize)]
-pub enum Status {
-    ToDo,
-    InProgress,
-    Done,
-}
-
-impl TryFrom<String> for Status {
-    type Error = String;
-    fn try_from(value: String) -> Result<Self, String> {
-        let value = value.to_lowercase();
-        if value == "todo" {
-            return Ok(Self::ToDo);
-        } else if value == "inprogress" {
-            return Ok(Self::InProgress);
-        } else if value == "done" {
-            return Ok(Self::Done);
-        }
-        Err("Only `todo`,`inprogress`,  `done`".to_owned())
-    }
-}
-
-impl TicketStore {
-    pub fn new() -> Self {
-        Self {
-            tickets: HashMap::new(),
-            counter: 0,
-        }
-    }
-
-    pub fn add_ticket(&mut self, ticket: TicketDraft) -> TicketId {
-        let id = TicketId(self.counter);
-        self.counter += 1;
-        let ticket = Ticket::new(id, ticket);
-        self.tickets.insert(id, ticket);
-        id
-    }
-
-    pub fn get(&self, id: TicketId) -> Option<&Ticket> {
-        self.tickets.get(&id)
-    }
-
-    pub fn get_mut(&mut self, id: TicketId) -> Option<&mut Ticket> {
-        self.tickets.get_mut(&id)
-    }
-}
-
-impl Index<TicketId> for TicketStore {
-    type Output = Ticket;
-
-    fn index(&self, index: TicketId) -> &Self::Output {
-        self.get(index).unwrap()
-    }
-}
-
-impl Index<&TicketId> for TicketStore {
-    type Output = Ticket;
-
-    fn index(&self, index: &TicketId) -> &Self::Output {
-        &self[*index]
-    }
-}
-
-impl IndexMut<TicketId> for TicketStore {
-    fn index_mut(&mut self, index: TicketId) -> &mut Self::Output {
-        self.get_mut(index).unwrap()
-    }
-}
-
-impl IndexMut<&TicketId> for TicketStore {
-    fn index_mut(&mut self, index: &TicketId) -> &mut Self::Output {
-        &mut self[*index]
-    }
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TicketPatch {
+    pub title: Option<TicketTitle>,
+    pub description: Option<TicketDescription>,
+    pub status: Option<Status>,
 }
